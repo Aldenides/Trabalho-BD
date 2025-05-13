@@ -6,8 +6,9 @@ import model.Categoria;
 import dao.CategoriaDAO;
 
 public class CategoriaForm extends BaseForm {
-    private JTextField codCategoriaField;
+    private JTextField nomeField;
     private JTextField descricaoField;
+    private String nomeAntigoParaAtualizacao;
     
     public CategoriaForm() {
         super("Cadastro de Categoria");
@@ -15,24 +16,22 @@ public class CategoriaForm extends BaseForm {
     }
     
     private void initializeComponents() {
-        // Código da Categoria
-        addFormComponent(createStyledLabel("Código da Categoria:"));
-        codCategoriaField = createStyledTextField();
-        addFormComponent(codCategoriaField);
+        // Nome da Categoria
+        nomeField = createStyledTextField();
+        addLabelAndField("Nome da Categoria:", nomeField);
         
         // Descrição da Categoria
-        addFormComponent(createStyledLabel("Descrição:"));
         descricaoField = createStyledTextField();
-        addFormComponent(descricaoField);
+        addLabelAndField("Descrição:", descricaoField);
     }
     
     @Override
     protected void handleInsert() {
         try {
-            int codCategoria = Integer.parseInt(codCategoriaField.getText());
+            String nome = nomeField.getText();
             String descricao = descricaoField.getText();
             
-            Categoria categoria = new Categoria(codCategoria, descricao);
+            Categoria categoria = new Categoria(nome, descricao);
             
             if (CategoriaDAO.inserir(categoria)) {
                 JOptionPane.showMessageDialog(this, "Categoria inserida com sucesso!");
@@ -40,8 +39,6 @@ public class CategoriaForm extends BaseForm {
             } else {
                 JOptionPane.showMessageDialog(this, "Erro ao inserir categoria.", "Erro", JOptionPane.ERROR_MESSAGE);
             }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Por favor, insira um código válido.", "Erro", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Erro: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
@@ -50,17 +47,17 @@ public class CategoriaForm extends BaseForm {
     @Override
     protected void handleSelect() {
         try {
-            int codCategoria = Integer.parseInt(codCategoriaField.getText());
-            Categoria categoria = CategoriaDAO.buscar(codCategoria);
+            String nome = nomeField.getText();
+            Categoria categoria = CategoriaDAO.buscarPorNome(nome);
             
             if (categoria != null) {
-                descricaoField.setText(categoria.getDescricaoCategoria());
+                nomeField.setText(categoria.getNome());
+                descricaoField.setText(categoria.getDescricao());
+                nomeAntigoParaAtualizacao = categoria.getNome();
                 JOptionPane.showMessageDialog(this, "Categoria encontrada!");
             } else {
                 JOptionPane.showMessageDialog(this, "Categoria não encontrada.", "Aviso", JOptionPane.WARNING_MESSAGE);
             }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Por favor, insira um código válido.", "Erro", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Erro: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
@@ -69,19 +66,18 @@ public class CategoriaForm extends BaseForm {
     @Override
     protected void handleUpdate() {
         try {
-            int codCategoria = Integer.parseInt(codCategoriaField.getText());
+            String nome = nomeField.getText();
             String descricao = descricaoField.getText();
             
-            Categoria categoria = new Categoria(codCategoria, descricao);
+            Categoria categoria = new Categoria(nome, descricao);
             
-            if (CategoriaDAO.atualizar(categoria)) {
+            if (nomeAntigoParaAtualizacao != null && CategoriaDAO.atualizar(categoria, nomeAntigoParaAtualizacao)) {
                 JOptionPane.showMessageDialog(this, "Categoria atualizada com sucesso!");
                 limparCampos();
+                nomeAntigoParaAtualizacao = null;
             } else {
-                JOptionPane.showMessageDialog(this, "Erro ao atualizar categoria.", "Erro", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Erro ao atualizar categoria. Primeiro selecione uma categoria.", "Erro", JOptionPane.ERROR_MESSAGE);
             }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Por favor, insira um código válido.", "Erro", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Erro: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
@@ -90,7 +86,7 @@ public class CategoriaForm extends BaseForm {
     @Override
     protected void handleDelete() {
         try {
-            int codCategoria = Integer.parseInt(codCategoriaField.getText());
+            String nome = nomeField.getText();
             
             int confirmacao = JOptionPane.showConfirmDialog(
                 this,
@@ -100,15 +96,13 @@ public class CategoriaForm extends BaseForm {
             );
             
             if (confirmacao == JOptionPane.YES_OPTION) {
-                if (CategoriaDAO.excluir(codCategoria)) {
+                if (CategoriaDAO.excluir(nome)) {
                     JOptionPane.showMessageDialog(this, "Categoria excluída com sucesso!");
                     limparCampos();
                 } else {
                     JOptionPane.showMessageDialog(this, "Erro ao excluir categoria.", "Erro", JOptionPane.ERROR_MESSAGE);
                 }
             }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Por favor, insira um código válido.", "Erro", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Erro: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
@@ -125,7 +119,8 @@ public class CategoriaForm extends BaseForm {
     }
     
     private void limparCampos() {
-        codCategoriaField.setText("");
+        nomeField.setText("");
         descricaoField.setText("");
+        nomeAntigoParaAtualizacao = null;
     }
 } 

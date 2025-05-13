@@ -9,34 +9,35 @@ import DataBase.Conexao;
 public class CategoriaDAO {
     
     public static boolean inserir(Categoria categoria) {
-        String sql = "INSERT INTO Categoria (codCategoria, descricaoCategoria) VALUES (?, ?)";
+        String sql = "INSERT INTO \"CATEGORIA-RECEITA\" (\"Cod-cat-rec\", \"Desc-cat-rec\") VALUES (?, ?)";
         
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
-            stmt.setInt(1, categoria.getCodCategoria());
-            stmt.setString(2, categoria.getDescricaoCategoria());
+            stmt.setInt(1, Integer.parseInt(categoria.getNome()));
+            stmt.setString(2, categoria.getDescricao());
             
-            return stmt.executeUpdate() > 0;
+            int linhasAfetadas = stmt.executeUpdate();
+            return linhasAfetadas > 0;
         } catch (SQLException e) {
             System.out.println("Erro ao inserir categoria: " + e.getMessage());
             return false;
         }
     }
     
-    public static Categoria buscar(int codCategoria) {
-        String sql = "SELECT * FROM Categoria WHERE codCategoria = ?";
+    public static Categoria buscarPorNome(String nome) {
+        String sql = "SELECT * FROM \"CATEGORIA-RECEITA\" WHERE \"Cod-cat-rec\" = ?";
         
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
-            stmt.setInt(1, codCategoria);
+            stmt.setInt(1, Integer.parseInt(nome));
             
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return new Categoria(
-                        rs.getInt("codCategoria"),
-                        rs.getString("descricaoCategoria")
+                        String.valueOf(rs.getInt("Cod-cat-rec")),
+                        rs.getString("Desc-cat-rec")
                     );
                 }
             }
@@ -47,18 +48,18 @@ public class CategoriaDAO {
         return null;
     }
     
-    public static List<Categoria> listarTodos() {
+    public static List<Categoria> listarTodas() {
         List<Categoria> categorias = new ArrayList<>();
-        String sql = "SELECT * FROM Categoria";
+        String sql = "SELECT * FROM \"CATEGORIA-RECEITA\"";
         
         try (Connection conn = Conexao.conectar();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
             
             while (rs.next()) {
                 Categoria categoria = new Categoria(
-                    rs.getInt("codCategoria"),
-                    rs.getString("descricaoCategoria")
+                    String.valueOf(rs.getInt("Cod-cat-rec")),
+                    rs.getString("Desc-cat-rec")
                 );
                 
                 categorias.add(categoria);
@@ -70,31 +71,33 @@ public class CategoriaDAO {
         return categorias;
     }
     
-    public static boolean atualizar(Categoria categoria) {
-        String sql = "UPDATE Categoria SET descricaoCategoria = ? WHERE codCategoria = ?";
+    public static boolean atualizar(Categoria categoria, String nomeAntigo) {
+        String sql = "UPDATE \"CATEGORIA-RECEITA\" SET \"Desc-cat-rec\" = ? WHERE \"Cod-cat-rec\" = ?";
         
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
-            stmt.setString(1, categoria.getDescricaoCategoria());
-            stmt.setInt(2, categoria.getCodCategoria());
+            stmt.setString(1, categoria.getDescricao());
+            stmt.setInt(2, Integer.parseInt(nomeAntigo));
             
-            return stmt.executeUpdate() > 0;
+            int linhasAfetadas = stmt.executeUpdate();
+            return linhasAfetadas > 0;
         } catch (SQLException e) {
             System.out.println("Erro ao atualizar categoria: " + e.getMessage());
             return false;
         }
     }
     
-    public static boolean excluir(int codCategoria) {
-        String sql = "DELETE FROM Categoria WHERE codCategoria = ?";
+    public static boolean excluir(String nome) {
+        String sql = "DELETE FROM \"CATEGORIA-RECEITA\" WHERE \"Cod-cat-rec\" = ?";
         
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
-            stmt.setInt(1, codCategoria);
+            stmt.setInt(1, Integer.parseInt(nome));
             
-            return stmt.executeUpdate() > 0;
+            int linhasAfetadas = stmt.executeUpdate();
+            return linhasAfetadas > 0;
         } catch (SQLException e) {
             System.out.println("Erro ao excluir categoria: " + e.getMessage());
             return false;

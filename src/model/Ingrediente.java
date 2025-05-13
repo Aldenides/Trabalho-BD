@@ -2,23 +2,42 @@ package model;
 
 public class Ingrediente {
     private int codIngrediente;
-    private String nomeIngrediente;
+    private String nome;
+    private String descricao;
 
     // Construtor, getters e setters
-    public Ingrediente(int codIngrediente, String nomeIngrediente) {
+    public Ingrediente(int codIngrediente, String nome, String descricao) {
         this.codIngrediente = codIngrediente;
-        this.nomeIngrediente = nomeIngrediente;
+        this.nome = nome;
+        this.descricao = descricao;
     }
 
     public int getCodIngrediente() {
         return codIngrediente;
     }
 
-    public String getNomeIngrediente() {
-        return nomeIngrediente;
+    public void setCodIngrediente(int codIngrediente) {
+        this.codIngrediente = codIngrediente;
     }
 
-    public void setNomeIngrediente(String nomeIngrediente) {
-        this.nomeIngrediente = nomeIngrediente;
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    @Override
+    public String toString() {
+        return nome;
     }
 } 

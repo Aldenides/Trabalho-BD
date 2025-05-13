@@ -1,24 +1,32 @@
 package model;
 
 public class Categoria {
-    private int codCategoria;
-    private String descricaoCategoria;
-
-    // Construtor, getters e setters
-    public Categoria(int codCategoria, String descricaoCategoria) {
-        this.codCategoria = codCategoria;
-        this.descricaoCategoria = descricaoCategoria;
+    private String nome;
+    private String descricao;
+    
+    public Categoria(String nome, String descricao) {
+        this.nome = nome;
+        this.descricao = descricao;
     }
-
-    public int getCodCategoria() {
-        return codCategoria;
+    
+    public String getNome() {
+        return nome;
     }
-
-    public String getDescricaoCategoria() {
-        return descricaoCategoria;
+    
+    public void setNome(String nome) {
+        this.nome = nome;
     }
-
-    public void setDescricaoCategoria(String descricaoCategoria) {
-        this.descricaoCategoria = descricaoCategoria;
+    
+    public String getDescricao() {
+        return descricao;
+    }
+    
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+    
+    @Override
+    public String toString() {
+        return nome;
     }
 } 
