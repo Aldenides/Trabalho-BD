@@ -8,9 +8,11 @@ import model.Cozinheiro;
 import dao.CozinheiroDAO;
 
 public class CozinheiroForm extends BaseForm {
+    private JTextField cpfField;
     private JTextField nomeField;
     private JTextField nomeFantasiaField;
     private JTextField dataContratoField;
+    private JTextField salarioField;
     
     public CozinheiroForm() {
         super("Cadastro de Cozinheiro");
@@ -18,31 +20,38 @@ public class CozinheiroForm extends BaseForm {
     }
     
     private void initializeComponents() {
+        // CPF
+        cpfField = createStyledTextField();
+        addLabelAndField("CPF:", cpfField);
+        
         // Nome do Cozinheiro
-        addFormComponent(createStyledLabel("Nome do Cozinheiro:"));
         nomeField = createStyledTextField();
-        addFormComponent(nomeField);
+        addLabelAndField("Nome do Cozinheiro:", nomeField);
         
         // Nome Fantasia
-        addFormComponent(createStyledLabel("Nome Fantasia:"));
         nomeFantasiaField = createStyledTextField();
-        addFormComponent(nomeFantasiaField);
+        addLabelAndField("Nome Fantasia:", nomeFantasiaField);
         
         // Data de Contrato
-        addFormComponent(createStyledLabel("Data de Contrato:"));
         dataContratoField = createStyledTextField();
         dataContratoField.setText(LocalDate.now().toString()); // Data atual como padrão
-        addFormComponent(dataContratoField);
+        addLabelAndField("Data de Contrato:", dataContratoField);
+        
+        // Salário
+        salarioField = createStyledTextField();
+        addLabelAndField("Salário:", salarioField);
     }
     
     @Override
     protected void handleInsert() {
         try {
+            long cpf = Long.parseLong(cpfField.getText());
             String nome = nomeField.getText();
             String nomeFantasia = nomeFantasiaField.getText();
             Date dtContrato = Date.valueOf(dataContratoField.getText());
+            Double salario = salarioField.getText().isEmpty() ? null : Double.parseDouble(salarioField.getText());
             
-            Cozinheiro cozinheiro = new Cozinheiro(nome, nomeFantasia, dtContrato);
+            Cozinheiro cozinheiro = new Cozinheiro(cpf, nome, nomeFantasia, dtContrato, salario);
             
             if (CozinheiroDAO.inserir(cozinheiro)) {
                 JOptionPane.showMessageDialog(this, "Cozinheiro inserido com sucesso!");
@@ -50,6 +59,8 @@ public class CozinheiroForm extends BaseForm {
             } else {
                 JOptionPane.showMessageDialog(this, "Erro ao inserir cozinheiro.", "Erro", JOptionPane.ERROR_MESSAGE);
             }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Por favor, preencha os campos numéricos corretamente.", "Erro", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Erro: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
@@ -58,16 +69,24 @@ public class CozinheiroForm extends BaseForm {
     @Override
     protected void handleSelect() {
         try {
-            String nomeFantasia = nomeFantasiaField.getText();
-            Cozinheiro cozinheiro = CozinheiroDAO.buscarPorNomeFantasia(nomeFantasia);
+            long cpf = Long.parseLong(cpfField.getText());
+            Cozinheiro cozinheiro = CozinheiroDAO.buscar(cpf);
             
             if (cozinheiro != null) {
                 nomeField.setText(cozinheiro.getNome());
+                nomeFantasiaField.setText(cozinheiro.getNomeFantasia());
                 dataContratoField.setText(cozinheiro.getDtContrato().toString());
+                if (cozinheiro.getSalario() != null) {
+                    salarioField.setText(String.valueOf(cozinheiro.getSalario()));
+                } else {
+                    salarioField.setText("");
+                }
                 JOptionPane.showMessageDialog(this, "Cozinheiro encontrado!");
             } else {
                 JOptionPane.showMessageDialog(this, "Cozinheiro não encontrado.", "Aviso", JOptionPane.WARNING_MESSAGE);
             }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Por favor, insira um CPF válido.", "Erro", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Erro: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
@@ -76,11 +95,13 @@ public class CozinheiroForm extends BaseForm {
     @Override
     protected void handleUpdate() {
         try {
+            long cpf = Long.parseLong(cpfField.getText());
             String nome = nomeField.getText();
             String nomeFantasia = nomeFantasiaField.getText();
             Date dtContrato = Date.valueOf(dataContratoField.getText());
+            Double salario = salarioField.getText().isEmpty() ? null : Double.parseDouble(salarioField.getText());
             
-            Cozinheiro cozinheiro = new Cozinheiro(nome, nomeFantasia, dtContrato);
+            Cozinheiro cozinheiro = new Cozinheiro(cpf, nome, nomeFantasia, dtContrato, salario);
             
             if (CozinheiroDAO.atualizar(cozinheiro)) {
                 JOptionPane.showMessageDialog(this, "Cozinheiro atualizado com sucesso!");
@@ -88,6 +109,8 @@ public class CozinheiroForm extends BaseForm {
             } else {
                 JOptionPane.showMessageDialog(this, "Erro ao atualizar cozinheiro.", "Erro", JOptionPane.ERROR_MESSAGE);
             }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Por favor, preencha os campos numéricos corretamente.", "Erro", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Erro: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
@@ -96,7 +119,7 @@ public class CozinheiroForm extends BaseForm {
     @Override
     protected void handleDelete() {
         try {
-            String nomeFantasia = nomeFantasiaField.getText();
+            long cpf = Long.parseLong(cpfField.getText());
             
             int confirmacao = JOptionPane.showConfirmDialog(
                 this,
@@ -106,13 +129,15 @@ public class CozinheiroForm extends BaseForm {
             );
             
             if (confirmacao == JOptionPane.YES_OPTION) {
-                if (CozinheiroDAO.excluirPorNomeFantasia(nomeFantasia)) {
+                if (CozinheiroDAO.excluir(cpf)) {
                     JOptionPane.showMessageDialog(this, "Cozinheiro excluído com sucesso!");
                     limparCampos();
                 } else {
                     JOptionPane.showMessageDialog(this, "Erro ao excluir cozinheiro.", "Erro", JOptionPane.ERROR_MESSAGE);
                 }
             }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Por favor, insira um CPF válido.", "Erro", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Erro: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
@@ -129,8 +154,10 @@ public class CozinheiroForm extends BaseForm {
     }
     
     private void limparCampos() {
+        cpfField.setText("");
         nomeField.setText("");
         nomeFantasiaField.setText("");
         dataContratoField.setText(LocalDate.now().toString());
+        salarioField.setText("");
     }
 } 

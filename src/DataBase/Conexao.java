@@ -6,9 +6,9 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class Conexao {
-    private static final String URL = "jdbc:postgresql://localhost:5432/Trabalho-BD";
+    private static final String URL = "jdbc:postgresql://localhost:5432/postgres";
     private static final String USUARIO = "postgres";
-    private static final String SENHA = "salame123";
+    private static final String SENHA = "postgres";
     private static Connection conexao;
 
     /**
@@ -31,7 +31,7 @@ public static Connection getConexao() throws SQLException {
 
             conexao = DriverManager.getConnection(URL, props);
             conexao.setAutoCommit(false);
-            System.out.println("[INFO] Nova conexão estabelecida");
+            System.out.println("[INFO] Nova conexão estabelecida com PostgreSQL");
         } catch (ClassNotFoundException e) {
             System.err.println("[ERRO] Driver PostgreSQL não encontrado: " + e.getMessage());
             throw new SQLException("Driver PostgreSQL não encontrado", e); // encapsula
@@ -67,6 +67,7 @@ public static Connection getConexao() throws SQLException {
         try (Connection conn = getConexao()) {
             return conn != null && conn.isValid(2);  // Testa com timeout de 2 segundos
         } catch (SQLException e) {
+            System.err.println("[ERRO] Falha ao testar conexão: " + e.getMessage());
             return false;
         }
     }

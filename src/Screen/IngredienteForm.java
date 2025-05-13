@@ -7,7 +7,8 @@ import dao.IngredienteDAO;
 
 public class IngredienteForm extends BaseForm {
     private JTextField codIngredienteField;
-    private JTextField nomeIngredienteField;
+    private JTextField nomeField;
+    private JTextField descricaoField;
     
     public IngredienteForm() {
         super("Cadastro de Ingrediente");
@@ -16,23 +17,26 @@ public class IngredienteForm extends BaseForm {
     
     private void initializeComponents() {
         // Código do Ingrediente
-        addFormComponent(createStyledLabel("Código do Ingrediente:"));
         codIngredienteField = createStyledTextField();
-        addFormComponent(codIngredienteField);
+        addLabelAndField("Código do Ingrediente:", codIngredienteField);
         
         // Nome do Ingrediente
-        addFormComponent(createStyledLabel("Nome do Ingrediente:"));
-        nomeIngredienteField = createStyledTextField();
-        addFormComponent(nomeIngredienteField);
+        nomeField = createStyledTextField();
+        addLabelAndField("Nome do Ingrediente:", nomeField);
+        
+        // Descrição do Ingrediente
+        descricaoField = createStyledTextField();
+        addLabelAndField("Descrição do Ingrediente:", descricaoField);
     }
     
     @Override
     protected void handleInsert() {
         try {
             int codIngrediente = Integer.parseInt(codIngredienteField.getText());
-            String nomeIngrediente = nomeIngredienteField.getText();
+            String nome = nomeField.getText();
+            String descricao = descricaoField.getText();
             
-            Ingrediente ingrediente = new Ingrediente(codIngrediente, nomeIngrediente);
+            Ingrediente ingrediente = new Ingrediente(codIngrediente, nome, descricao);
             
             if (IngredienteDAO.inserir(ingrediente)) {
                 JOptionPane.showMessageDialog(this, "Ingrediente inserido com sucesso!");
@@ -54,7 +58,8 @@ public class IngredienteForm extends BaseForm {
             Ingrediente ingrediente = IngredienteDAO.buscar(codIngrediente);
             
             if (ingrediente != null) {
-                nomeIngredienteField.setText(ingrediente.getNomeIngrediente());
+                nomeField.setText(ingrediente.getNome());
+                descricaoField.setText(ingrediente.getDescricao());
                 JOptionPane.showMessageDialog(this, "Ingrediente encontrado!");
             } else {
                 JOptionPane.showMessageDialog(this, "Ingrediente não encontrado.", "Aviso", JOptionPane.WARNING_MESSAGE);
@@ -70,9 +75,10 @@ public class IngredienteForm extends BaseForm {
     protected void handleUpdate() {
         try {
             int codIngrediente = Integer.parseInt(codIngredienteField.getText());
-            String nomeIngrediente = nomeIngredienteField.getText();
+            String nome = nomeField.getText();
+            String descricao = descricaoField.getText();
             
-            Ingrediente ingrediente = new Ingrediente(codIngrediente, nomeIngrediente);
+            Ingrediente ingrediente = new Ingrediente(codIngrediente, nome, descricao);
             
             if (IngredienteDAO.atualizar(ingrediente)) {
                 JOptionPane.showMessageDialog(this, "Ingrediente atualizado com sucesso!");
@@ -126,6 +132,7 @@ public class IngredienteForm extends BaseForm {
     
     private void limparCampos() {
         codIngredienteField.setText("");
-        nomeIngredienteField.setText("");
+        nomeField.setText("");
+        descricaoField.setText("");
     }
 } 

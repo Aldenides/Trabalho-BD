@@ -1,47 +1,52 @@
 package model;
 
 public class IngredienteReceita {
-    private int codReceita;
-    private String nomeFantasiaCo;
-    private int codIngredientes;
-    private double quantidadeIngredientett;
-    private String meida;
-
-    // Construtor, getters e setters
-    public IngredienteReceita(int codReceita, String nomeFantasiaCo, int codIngredientes, 
-                              double quantidadeIngredientett, String meida) {
-        this.codReceita = codReceita;
-        this.nomeFantasiaCo = nomeFantasiaCo;
-        this.codIngredientes = codIngredientes;
-        this.quantidadeIngredientett = quantidadeIngredientett;
-        this.meida = meida;
+    private Receita receita;
+    private Ingrediente ingrediente;
+    private double quantidade;
+    private String unidadeMedida;
+    
+    public IngredienteReceita(Receita receita, Ingrediente ingrediente, double quantidade, String unidadeMedida) {
+        this.receita = receita;
+        this.ingrediente = ingrediente;
+        this.quantidade = quantidade;
+        this.unidadeMedida = unidadeMedida;
     }
-
-    public int getCodReceita() {
-        return codReceita;
+    
+    public Receita getReceita() {
+        return receita;
     }
-
-    public String getNomeFantasiaCo() {
-        return nomeFantasiaCo;
+    
+    public void setReceita(Receita receita) {
+        this.receita = receita;
     }
-
-    public int getCodIngredientes() {
-        return codIngredientes;
+    
+    public Ingrediente getIngrediente() {
+        return ingrediente;
     }
-
-    public double getQuantidadeIngredientett() {
-        return quantidadeIngredientett;
+    
+    public void setIngrediente(Ingrediente ingrediente) {
+        this.ingrediente = ingrediente;
     }
-
-    public String getMeida() {
-        return meida;
+    
+    public double getQuantidade() {
+        return quantidade;
     }
-
-    public void setQuantidadeIngredientett(double quantidadeIngredientett) {
-        this.quantidadeIngredientett = quantidadeIngredientett;
+    
+    public void setQuantidade(double quantidade) {
+        this.quantidade = quantidade;
     }
-
-    public void setMeida(String meida) {
-        this.meida = meida;
+    
+    public String getUnidadeMedida() {
+        return unidadeMedida;
+    }
+    
+    public void setUnidadeMedida(String unidadeMedida) {
+        this.unidadeMedida = unidadeMedida;
+    }
+    
+    @Override
+    public String toString() {
+        return ingrediente.getNome() + " - " + quantidade + " " + unidadeMedida;
     }
 } 

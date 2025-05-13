@@ -182,7 +182,7 @@ public class BaseForm extends JFrame {
     }
     
     // Método para adicionar um rótulo e um campo de texto como uma unidade
-    protected void addLabelAndField(String labelText, JTextField field) {
+    protected void addLabelAndField(String labelText, JComponent field) {
         JPanel rowPanel = new JPanel();
         rowPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 5));
         rowPanel.setBackground(new Color(236, 240, 241));
