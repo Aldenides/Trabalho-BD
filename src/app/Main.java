@@ -2,59 +2,109 @@ package app;
 import Screen.*;
 import java.awt.*;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 public class Main extends JFrame {
     public Main() {
         setTitle("Sistema de Receitas");
-        setSize(700, 500);
+        setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
+        // Painel de título estilizado
+        JLabel titulo = new JLabel("Sistema de Receitas", SwingConstants.CENTER);
+        titulo.setFont(new Font("Segoe UI", Font.BOLD, 36));
+        titulo.setForeground(new Color(44, 62, 80));
+        titulo.setBorder(new EmptyBorder(40, 0, 20, 0));
+        add(titulo, BorderLayout.NORTH);
 
-        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.CENTER,80,50));
+        // Painel central com fundo suave
+        JPanel centralPanel = new JPanel();
+        centralPanel.setBackground(new Color(236, 240, 241));
+        centralPanel.setLayout(new GridBagLayout());
+        add(centralPanel, BorderLayout.CENTER);
 
-        String[] operacoes = {"Inserir", "Consultar", "Atualizar", "Excluir"};
-        for (String op : operacoes) {
-            JButton btn = new JButton(op);
-            btn.setPreferredSize(new Dimension(80, 35));
-            btn.setBackground(new Color(70, 130, 180));
-            btn.setForeground(Color.WHITE); 
-            btn.setOpaque(true);
-            btn.setBorderPainted(false); 
-            
-            btn.setFont(new Font("Arial", Font.BOLD, 10));
-            
-            btn.addMouseListener(new java.awt.event.MouseAdapter() {
-                public void mouseEntered(java.awt.event.MouseEvent evt) {
-                    btn.setBackground(new Color(100, 150, 200)); 
-                }
-                public void mouseExited(java.awt.event.MouseEvent evt) {
-                    btn.setBackground(new Color(70, 130, 180));  
-                }
-    });
-            btn.addActionListener(e -> abrirTela(op));
+        // Painel de botões customizado
+        JPanel buttons = new JPanel(new GridLayout(3, 3, 20, 20));
+        buttons.setOpaque(false);
+        
+        String[] entidades = {
+            "Cozinheiros", "Degustadores", "Editores",
+            "Livros", "Receitas", "Restaurantes",
+            "Categorias", "Ingredientes", "Ingredientes da Receita"
+        };
+        
+        for (String entidade : entidades) {
+            JButton btn = createStyledButton(entidade);
+            btn.addActionListener(e -> abrirTela(entidade));
             buttons.add(btn);
         }
-        
-    add(buttons, BorderLayout.SOUTH);
-    
-    add(new JPanel(), BorderLayout.CENTER);
+
+        // Centralizar verticalmente
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.CENTER;
+        centralPanel.add(buttons, gbc);
     }
     
-    private void abrirTela(String operacao) {
-        switch(operacao) {
-            case "Inserir":
+    private JButton createStyledButton(String text) {
+        JButton btn = new JButton(text) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                if (getModel().isArmed()) {
+                    g.setColor(new Color(52, 152, 219));
+                } else if (getModel().isRollover()) {
+                    g.setColor(new Color(41, 128, 185));
+                } else {
+                    g.setColor(new Color(52, 152, 219));
+                }
+                g.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30);
+                super.paintComponent(g);
+            }
+        };
+        
+        btn.setPreferredSize(new Dimension(200, 50));
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        btn.setForeground(Color.WHITE);
+        btn.setOpaque(false);
+        btn.setContentAreaFilled(false);
+        btn.setBorderPainted(false);
+        btn.setFocusPainted(false);
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        return btn;
+    }
+    
+    private void abrirTela(String entidade) {
+        switch(entidade) {
+            case "Cozinheiros":
                 new InsertCozinheiro().setVisible(true);
                 break;
-            case "Consultar":
-                new Select().setVisible(true);
+            case "Degustadores":
+                new DegustadorForm().setVisible(true);
                 break;
-            case "Atualizar":
-                new Update().setVisible(true);
+            case "Editores":
+                new EditorForm().setVisible(true);
                 break;
-            case "Excluir":
-                new Delete().setVisible(true);
+            case "Livros":
+                new LivroForm().setVisible(true);
+                break;
+            case "Receitas":
+                new ReceitaForm().setVisible(true);
+                break;
+            case "Restaurantes":
+                new RestauranteForm().setVisible(true);
+                break;
+            case "Categorias":
+                new CategoriaForm().setVisible(true);
+                break;
+            case "Ingredientes":
+                new IngredienteForm().setVisible(true);
+                break;
+            case "Ingredientes da Receita":
+                new IngredienteReceitaForm().setVisible(true);
                 break;
         }
         this.setVisible(false);
