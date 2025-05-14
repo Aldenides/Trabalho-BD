@@ -17,31 +17,31 @@ public class Conexao {
      * @throws SQLException se ocorrer erro na conexão
      * @throws ClassNotFoundException 
      */
-public static Connection getConexao() throws SQLException {
-    if (conexao == null || conexao.isClosed()) {
-        try {
-            // Garante que o driver seja carregado explicitamente
-            Class.forName("org.postgresql.Driver");
+    public static Connection getConexao() throws SQLException {
+        if (conexao == null || conexao.isClosed()) {
+            try {
+                // Garante que o driver seja carregado explicitamente
+                Class.forName("org.postgresql.Driver");
 
-            Properties props = new Properties();
-            props.setProperty("user", USUARIO);
-            props.setProperty("password", SENHA);
-            props.setProperty("ssl", "false");
-            props.setProperty("tcpKeepAlive", "true");
+                Properties props = new Properties();
+                props.setProperty("user", USUARIO);
+                props.setProperty("password", SENHA);
+                props.setProperty("ssl", "false");
+                props.setProperty("tcpKeepAlive", "true");
 
-            conexao = DriverManager.getConnection(URL, props);
-            conexao.setAutoCommit(false);
-            System.out.println("[INFO] Nova conexão estabelecida com PostgreSQL");
-        } catch (ClassNotFoundException e) {
-            System.err.println("[ERRO] Driver PostgreSQL não encontrado: " + e.getMessage());
-            throw new SQLException("Driver PostgreSQL não encontrado", e); // encapsula
-        } catch (SQLException e) {
-            System.err.println("[ERRO] Falha ao obter conexão: " + e.getMessage());
-            throw new SQLException("Falha ao conectar ao banco de dados", e);
+                conexao = DriverManager.getConnection(URL, props);
+                conexao.setAutoCommit(true); // Alterado para true para simplificar transações
+                System.out.println("[INFO] Nova conexão estabelecida com PostgreSQL");
+            } catch (ClassNotFoundException e) {
+                System.err.println("[ERRO] Driver PostgreSQL não encontrado: " + e.getMessage());
+                throw new SQLException("Driver PostgreSQL não encontrado", e); // encapsula
+            } catch (SQLException e) {
+                System.err.println("[ERRO] Falha ao obter conexão: " + e.getMessage());
+                throw new SQLException("Falha ao conectar ao banco de dados", e);
+            }
         }
+        return conexao;
     }
-    return conexao;
-}
 
     /**
      * Fecha a conexão atual
@@ -79,5 +79,41 @@ public static Connection getConexao() throws SQLException {
     @Deprecated
     public static Connection conectar() throws SQLException {
         return getConexao();
+    }
+    
+    /**
+     * Confirma as alterações na transação atual
+     */
+    public static void commit() throws SQLException {
+        if (conexao != null && !conexao.isClosed() && !conexao.getAutoCommit()) {
+            conexao.commit();
+        }
+    }
+    
+    /**
+     * Desfaz as alterações na transação atual
+     */
+    public static void rollback() throws SQLException {
+        if (conexao != null && !conexao.isClosed() && !conexao.getAutoCommit()) {
+            conexao.rollback();
+        }
+    }
+    
+    /**
+     * Inicia uma nova transação
+     */
+    public static void iniciarTransacao() throws SQLException {
+        if (conexao != null && !conexao.isClosed()) {
+            conexao.setAutoCommit(false);
+        }
+    }
+    
+    /**
+     * Finaliza a transação atual
+     */
+    public static void finalizarTransacao() throws SQLException {
+        if (conexao != null && !conexao.isClosed()) {
+            conexao.setAutoCommit(true);
+        }
     }
 }

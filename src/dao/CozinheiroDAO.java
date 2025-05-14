@@ -15,7 +15,7 @@ public class CozinheiroDAO {
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
-            stmt.setLong(1, cozinheiro.getCpf());
+            stmt.setInt(1, cozinheiro.getCpf());
             stmt.setString(2, cozinheiro.getNome());
             stmt.setString(3, cozinheiro.getNomeFantasia());
             stmt.setDate(4, cozinheiro.getDtContrato());
@@ -46,7 +46,7 @@ public class CozinheiroDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return new Cozinheiro(
-                        rs.getLong("cpf-coz"),
+                        rs.getInt("cpf-coz"),
                         rs.getString("Nome-coz"),
                         rs.getString("Nome-fantasia"),
                         rs.getDate("Dt-contrato-coz"),
@@ -61,18 +61,18 @@ public class CozinheiroDAO {
         return null;
     }
     
-    public static Cozinheiro buscar(long cpf) {
+    public static Cozinheiro buscar(int cpf) {
         String sql = "SELECT * FROM \"COZINHEIROS\" WHERE \"cpf-coz\" = ?";
         
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
-            stmt.setLong(1, cpf);
+            stmt.setInt(1, cpf);
             
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return new Cozinheiro(
-                        rs.getLong("cpf-coz"),
+                        rs.getInt("cpf-coz"),
                         rs.getString("Nome-coz"),
                         rs.getString("Nome-fantasia"),
                         rs.getDate("Dt-contrato-coz"),
@@ -97,7 +97,7 @@ public class CozinheiroDAO {
             
             while (rs.next()) {
                 Cozinheiro cozinheiro = new Cozinheiro(
-                    rs.getLong("cpf-coz"),
+                    rs.getInt("cpf-coz"),
                     rs.getString("Nome-coz"),
                     rs.getString("Nome-fantasia"),
                     rs.getDate("Dt-contrato-coz"),
@@ -130,7 +130,7 @@ public class CozinheiroDAO {
                 stmt.setNull(4, Types.DECIMAL);
             }
             
-            stmt.setLong(5, cozinheiro.getCpf());
+            stmt.setInt(5, cozinheiro.getCpf());
             
             int result = stmt.executeUpdate();
             conn.commit();
@@ -141,13 +141,13 @@ public class CozinheiroDAO {
         }
     }
     
-    public static boolean excluir(long cpf) {
+    public static boolean excluir(int cpf) {
         String sql = "DELETE FROM \"COZINHEIROS\" WHERE \"cpf-coz\" = ?";
         
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
-            stmt.setLong(1, cpf);
+            stmt.setInt(1, cpf);
             
             int result = stmt.executeUpdate();
             conn.commit();

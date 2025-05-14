@@ -3,14 +3,14 @@ package model;
 import java.sql.Date;
 
 public class Cozinheiro {
-    private long cpf;
+    private int cpf;
     private String nome;
     private String nomeFantasia;
     private Date dtContrato;
     private Double salario;
 
     // Construtor, getters e setters
-    public Cozinheiro(long cpf, String nome, String nomeFantasia, Date dtContrato, Double salario) {
+    public Cozinheiro(int cpf, String nome, String nomeFantasia, Date dtContrato, Double salario) {
         this.cpf = cpf;
         this.nome = nome;
         this.nomeFantasia = nomeFantasia;
@@ -18,7 +18,7 @@ public class Cozinheiro {
         this.salario = salario;
     }
     
-    public long getCpf() {
+    public int getCpf() {
         return cpf;
     }
 
@@ -49,5 +49,9 @@ public class Cozinheiro {
     public void setSalario(Double salario) {
         this.salario = salario;
     }
-
+    
+    @Override
+    public String toString() {
+        return String.format("CPF: %d - %s (%s)", cpf, nome, nomeFantasia);
+    }
 }

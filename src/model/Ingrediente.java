@@ -38,6 +38,7 @@ public class Ingrediente {
 
     @Override
     public String toString() {
-        return nome;
+        // Format: "Código: X - Nome do Ingrediente"
+        return String.format("Código: %d - %s", codIngrediente, nome);
     }
 } 
