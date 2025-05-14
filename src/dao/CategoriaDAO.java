@@ -14,7 +14,15 @@ public class CategoriaDAO {
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
-            stmt.setInt(1, Integer.parseInt(categoria.getNome()));
+            int codCategoria;
+            try {
+                codCategoria = Integer.parseInt(categoria.getNome());
+            } catch (NumberFormatException e) {
+                System.out.println("Erro: O código da categoria deve ser um número inteiro.");
+                return false;
+            }
+            
+            stmt.setInt(1, codCategoria);
             stmt.setString(2, categoria.getDescricao());
             
             int linhasAfetadas = stmt.executeUpdate();
@@ -31,7 +39,15 @@ public class CategoriaDAO {
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
-            stmt.setInt(1, Integer.parseInt(nome));
+            int codCategoria;
+            try {
+                codCategoria = Integer.parseInt(nome);
+            } catch (NumberFormatException e) {
+                System.out.println("Erro: O código da categoria deve ser um número inteiro.");
+                return null;
+            }
+            
+            stmt.setInt(1, codCategoria);
             
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -77,8 +93,16 @@ public class CategoriaDAO {
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
+            int codCategoriaAntigo;
+            try {
+                codCategoriaAntigo = Integer.parseInt(nomeAntigo);
+            } catch (NumberFormatException e) {
+                System.out.println("Erro: O código da categoria deve ser um número inteiro.");
+                return false;
+            }
+            
             stmt.setString(1, categoria.getDescricao());
-            stmt.setInt(2, Integer.parseInt(nomeAntigo));
+            stmt.setInt(2, codCategoriaAntigo);
             
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
@@ -94,7 +118,15 @@ public class CategoriaDAO {
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
-            stmt.setInt(1, Integer.parseInt(nome));
+            int codCategoria;
+            try {
+                codCategoria = Integer.parseInt(nome);
+            } catch (NumberFormatException e) {
+                System.out.println("Erro: O código da categoria deve ser um número inteiro.");
+                return false;
+            }
+            
+            stmt.setInt(1, codCategoria);
             
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;

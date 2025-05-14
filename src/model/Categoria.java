@@ -27,6 +27,6 @@ public class Categoria {
     
     @Override
     public String toString() {
-        return nome;
+        return String.format("Código: %s - %s", nome, descricao);
     }
 } 

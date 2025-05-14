@@ -19,8 +19,19 @@ public class ReceitaDAO {
             stmt.setInt(1, receita.getCodReceita());
             stmt.setString(2, receita.getNome());
             stmt.setDate(3, receita.getDataCriacao());
-            stmt.setInt(4, Integer.parseInt(receita.getCategoria().getNome()));  // Código da categoria
-            stmt.setLong(5, receita.getCozinheiro().getCpf());  // CPF do cozinheiro
+            
+            // Correção na obtenção do código da categoria
+            int codCategoria;
+            try {
+                codCategoria = Integer.parseInt(receita.getCategoria().getNome());
+            } catch (NumberFormatException e) {
+                System.out.println("Erro ao converter código da categoria: " + e.getMessage());
+                System.out.println("Usando valor 1 como padrão para categoria");
+                codCategoria = 1; // Valor padrão
+            }
+            
+            stmt.setInt(4, codCategoria);
+            stmt.setInt(5, (int)receita.getCozinheiro().getCpf());
             
             int linhasAfetadas = stmt.executeUpdate();
             return linhasAfetadas > 0;
@@ -46,7 +57,7 @@ public class ReceitaDAO {
                 if (rs.next()) {
                     // Criar o objeto Cozinheiro
                     Cozinheiro cozinheiro = new Cozinheiro(
-                            rs.getLong("cpf-coz"),
+                            rs.getInt("cpf-coz"),
                             rs.getString("Nome-coz"),
                             rs.getString("Nome-fantasia"),
                             rs.getDate("Dt-contrato-coz"),
@@ -94,7 +105,7 @@ public class ReceitaDAO {
             while (rs.next()) {
                 // Criar o objeto Cozinheiro
                 Cozinheiro cozinheiro = new Cozinheiro(
-                        rs.getLong("cpf-coz"),
+                        rs.getInt("cpf-coz"),
                         rs.getString("Nome-coz"),
                         rs.getString("Nome-fantasia"),
                         rs.getDate("Dt-contrato-coz"),
@@ -137,8 +148,19 @@ public class ReceitaDAO {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, receita.getNome());
             stmt.setDate(2, receita.getDataCriacao());
-            stmt.setInt(3, Integer.parseInt(receita.getCategoria().getNome()));
-            stmt.setLong(4, receita.getCozinheiro().getCpf());
+            
+            // Correção na obtenção do código da categoria
+            int codCategoria;
+            try {
+                codCategoria = Integer.parseInt(receita.getCategoria().getNome());
+            } catch (NumberFormatException e) {
+                System.out.println("Erro ao converter código da categoria: " + e.getMessage());
+                System.out.println("Usando valor 1 como padrão para categoria");
+                codCategoria = 1; // Valor padrão
+            }
+            
+            stmt.setInt(3, codCategoria);
+            stmt.setInt(4, (int)receita.getCozinheiro().getCpf());
             stmt.setInt(5, receita.getCodReceita());
             
             int linhasAfetadas = stmt.executeUpdate();

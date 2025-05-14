@@ -1,5 +1,6 @@
 package app;
 import Screen.*;
+import DataBase.SQLDebugger;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -80,7 +81,7 @@ public class Main extends JFrame {
     private void abrirTela(String entidade) {
         switch(entidade) {
             case "Cozinheiros":
-                new InsertCozinheiro().setVisible(true);
+                new CozinheiroForm().setVisible(true);
                 break;
             case "Degustadores":
                 new DegustadorForm().setVisible(true);
@@ -104,7 +105,11 @@ public class Main extends JFrame {
                 new IngredienteForm().setVisible(true);
                 break;
             case "Ingredientes da Receita":
-                new IngredienteReceitaForm().setVisible(true);
+                JOptionPane.showMessageDialog(this, 
+                    "Para gerenciar os ingredientes de uma receita, primeiro selecione uma receita no cadastro de receitas.",
+                    "Selecione uma Receita",
+                    JOptionPane.INFORMATION_MESSAGE);
+                new ReceitaForm().setVisible(true);
                 break;
         }
         this.setVisible(false);

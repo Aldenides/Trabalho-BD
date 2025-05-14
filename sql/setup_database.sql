@@ -3,7 +3,7 @@
 
 -- Tabela COZINHEIROS
 CREATE TABLE IF NOT EXISTS "COZINHEIROS" (
-  "cpf-coz" BIGINT NOT NULL,
+  "cpf-coz" INT NOT NULL,
   "Nome-coz" VARCHAR(80) NOT NULL,
   "Nome-fantasia" VARCHAR(80) NOT NULL,
   "Dt-contrato-coz" DATE NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS "COZINHEIROS" (
 
 -- Tabela DEGUSTADORES
 CREATE TABLE IF NOT EXISTS "DEGUSTADORES" (
-  "Cpf-deg" BIGINT NOT NULL,
+  "Cpf-deg" INT NOT NULL,
   "Nome-deg" VARCHAR(80) NOT NULL,
   "Dt-contrato-deg" DATE NOT NULL,
   "Salario-deg" DECIMAL(8, 2),
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS "DEGUSTADORES" (
 
 -- Tabela EDITORES
 CREATE TABLE IF NOT EXISTS "EDITORES" (
-  "Cpf-edit" BIGINT NOT NULL,
+  "Cpf-edit" INT NOT NULL,
   "Nome-edit" VARCHAR(80) NOT NULL,
   "Dt-contrato-edit" DATE NOT NULL,
   "Salario-edit" DECIMAL(8, 2),
@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS "INGREDIENTES-RECEITAS" (
 
 -- Tabela RESTAURANTES-COZINHEIRO
 CREATE TABLE IF NOT EXISTS "RESTAURANTES-COZINHEIRO" (
-  "Cod-coz-restcoz" BIGINT NOT NULL,
+  "Cod-coz-restcoz" INT NOT NULL,
   "Cod-rest-restcoz" INT NOT NULL,
   "Dt-contratacao" DATE NOT NULL,
   CONSTRAINT "RESTAURANTES-COZINHEIRO_pkey" PRIMARY KEY ("Cod-coz-restcoz", "Cod-rest-restcoz"),
@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS "RESTAURANTES-COZINHEIRO" (
 
 -- Tabela TESTES
 CREATE TABLE IF NOT EXISTS "TESTES" (
-  "Cpf-deg-test" BIGINT NOT NULL,
+  "Cpf-deg-test" INT NOT NULL,
   "Cod-rec-test" INT NOT NULL,
   "Dt-teste" DATE NOT NULL,
   "Nota-teste" NUMERIC NOT NULL,
@@ -142,9 +142,9 @@ ON CONFLICT DO NOTHING;
 
 -- Inserir cozinheiros
 INSERT INTO "COZINHEIROS" ("cpf-coz", "Nome-coz", "Nome-fantasia", "Dt-contrato-coz", "salario-coz") VALUES 
-    (12345678901, 'Carlos Silva', 'Chef Carlos', '2020-01-15', 5500.00),
-    (23456789012, 'Maria Oliveira', 'Chefe Maria', '2021-03-10', 6500.00),
-    (34567890123, 'José Santos', 'Mestre José', '2019-11-05', 4800.00)
+    (123456789, 'Carlos Silva', 'Chef Carlos', '2020-01-15', 5500.00),
+    (234567890, 'Maria Oliveira', 'Chefe Maria', '2021-03-10', 6500.00),
+    (345678901, 'José Santos', 'Mestre José', '2019-11-05', 4800.00)
 ON CONFLICT DO NOTHING;
 
 -- Inserir ingredientes
@@ -175,12 +175,12 @@ ON CONFLICT DO NOTHING;
 
 -- Inserir degustadores
 INSERT INTO "DEGUSTADORES" ("Cpf-deg", "Nome-deg", "Dt-contrato-deg", "Salario-deg") VALUES
-    (45678901234, 'Ana Pereira', '2020-05-10', 3800.00),
-    (56789012345, 'Paulo Souza', '2019-08-15', 3600.00)
+    (456789012, 'Ana Pereira', '2020-05-10', 3800.00),
+    (567890123, 'Paulo Souza', '2019-08-15', 3600.00)
 ON CONFLICT DO NOTHING;
 
 -- Inserir editores
 INSERT INTO "EDITORES" ("Cpf-edit", "Nome-edit", "Dt-contrato-edit", "Salario-edit") VALUES
-    (67890123456, 'Lucia Ferreira', '2018-07-20', 4200.00),
-    (78901234567, 'Roberto Alves', '2019-11-12', 4500.00)
+    (678901234, 'Lucia Ferreira', '2018-07-20', 4200.00),
+    (789012345, 'Roberto Alves', '2019-11-12', 4500.00)
 ON CONFLICT DO NOTHING; 

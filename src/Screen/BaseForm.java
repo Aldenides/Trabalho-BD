@@ -146,9 +146,13 @@ public class BaseForm extends JFrame {
     protected JTextField createStyledTextField() {
         JTextField field = new JTextField(20);
         field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        field.setPreferredSize(new Dimension(300, 30));
-        field.setMinimumSize(new Dimension(300, 30));
-        field.setMaximumSize(new Dimension(300, 30));
+        field.setPreferredSize(new Dimension(250, 30));
+        field.setMinimumSize(new Dimension(250, 30));
+        field.setMaximumSize(new Dimension(250, 30));
+        field.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
+            BorderFactory.createEmptyBorder(3, 6, 3, 6)
+        ));
         field.setAlignmentX(Component.CENTER_ALIGNMENT);
         return field;
     }
@@ -157,8 +161,9 @@ public class BaseForm extends JFrame {
         JLabel label = new JLabel(text);
         label.setFont(new Font("Segoe UI", Font.BOLD, 14));
         label.setForeground(new Color(44, 62, 80));
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-        label.setAlignmentX(Component.CENTER_ALIGNMENT);
+        label.setPreferredSize(new Dimension(180, 25));
+        label.setHorizontalAlignment(SwingConstants.RIGHT);
+        label.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
         return label;
     }
     
@@ -183,17 +188,33 @@ public class BaseForm extends JFrame {
     
     // Método para adicionar um rótulo e um campo de texto como uma unidade
     protected void addLabelAndField(String labelText, JComponent field) {
-        JPanel rowPanel = new JPanel();
-        rowPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        JPanel rowPanel = new JPanel(new GridBagLayout());
         rowPanel.setBackground(new Color(236, 240, 241));
+        
+        GridBagConstraints panelGbc = new GridBagConstraints();
         
         // Criar e adicionar o rótulo
         JLabel label = createStyledLabel(labelText);
         label.setPreferredSize(new Dimension(180, 25));
         label.setHorizontalAlignment(SwingConstants.RIGHT);
         
-        rowPanel.add(label);
-        rowPanel.add(field);
+        panelGbc.gridx = 0;
+        panelGbc.gridy = 0;
+        panelGbc.anchor = GridBagConstraints.EAST;
+        panelGbc.insets = new Insets(5, 5, 5, 10);
+        rowPanel.add(label, panelGbc);
+        
+        // Adicionar o campo
+        panelGbc.gridx = 1;
+        panelGbc.anchor = GridBagConstraints.WEST;
+        panelGbc.insets = new Insets(5, 0, 5, 5);
+        
+        // Se o campo não tiver um tamanho definido, defina-o
+        if (field.getPreferredSize().width < 100) {
+            field.setPreferredSize(new Dimension(250, 30));
+        }
+        
+        rowPanel.add(field, panelGbc);
         
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridwidth = GridBagConstraints.REMAINDER;

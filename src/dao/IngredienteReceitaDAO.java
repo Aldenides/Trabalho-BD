@@ -5,6 +5,8 @@ import model.Ingrediente;
 import model.IngredienteReceita;
 import model.Receita;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,15 +21,67 @@ public class IngredienteReceitaDAO {
         
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            // Verificar se as referências não são nulas
+            if (ingredienteReceita.getReceita() == null) {
+                System.out.println("Erro: A receita não pode ser nula!");
+                return false;
+            }
+            
+            if (ingredienteReceita.getIngrediente() == null) {
+                System.out.println("Erro: O ingrediente não pode ser nulo!");
+                return false;
+            }
+            
+            // Validar que a quantidade não seja negativa
+            if (ingredienteReceita.getQuantidade() < 0) {
+                System.out.println("Erro: A quantidade não pode ser negativa!");
+                return false;
+            }
+            
+            // Validar que a quantidade esteja dentro do limite numeric(4,2)
+            if (ingredienteReceita.getQuantidade() >= 100) {
+                System.out.println("Erro: A quantidade deve ser menor que 100!");
+                return false;
+            }
+            
             stmt.setInt(1, ingredienteReceita.getReceita().getCodReceita());
             stmt.setInt(2, ingredienteReceita.getIngrediente().getCodIngrediente());
-            stmt.setDouble(3, ingredienteReceita.getQuantidade());
+            
+            try {
+                // Converter para BigDecimal com escala 2 (duas casas decimais)
+                BigDecimal quantidade = BigDecimal.valueOf(ingredienteReceita.getQuantidade())
+                                           .setScale(2, RoundingMode.HALF_UP);
+                stmt.setBigDecimal(3, quantidade);
+            } catch (Exception e) {
+                System.out.println("Erro ao converter quantidade para o formato do banco: " + e.getMessage());
+                return false;
+            }
+            
             stmt.setString(4, ingredienteReceita.getUnidadeMedida());
             
+            System.out.println("Executando SQL: " + sql);
+            System.out.println("Parâmetros: CodReceita=" + ingredienteReceita.getReceita().getCodReceita() + 
+                             ", CodIngrediente=" + ingredienteReceita.getIngrediente().getCodIngrediente() + 
+                             ", Quantidade=" + ingredienteReceita.getQuantidade() + 
+                             ", Unidade=" + ingredienteReceita.getUnidadeMedida());
+            
             int linhasAfetadas = stmt.executeUpdate();
-            return linhasAfetadas > 0;
+            
+            if (linhasAfetadas > 0) {
+                System.out.println("Ingrediente na receita inserido com sucesso!");
+                return true;
+            } else {
+                System.out.println("Nenhuma linha afetada ao inserir ingrediente na receita.");
+                return false;
+            }
         } catch (SQLException e) {
             System.out.println("Erro ao inserir ingrediente na receita: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        } catch (Exception e) {
+            System.out.println("Erro não esperado ao inserir ingrediente na receita: " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
@@ -44,6 +98,9 @@ public class IngredienteReceitaDAO {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, codReceita);
             stmt.setInt(2, codIngrediente);
+            
+            System.out.println("Executando SQL: " + sql);
+            System.out.println("Parâmetros: CodReceita=" + codReceita + ", CodIngrediente=" + codIngrediente);
             
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -73,10 +130,13 @@ public class IngredienteReceitaDAO {
                             rs.getDouble("Quant-ingrec"),
                             rs.getString("Med-ingrec")
                     );
+                } else {
+                    System.out.println("Nenhum ingrediente encontrado para a receita " + codReceita + " e ingrediente " + codIngrediente);
                 }
             }
         } catch (SQLException e) {
             System.out.println("Erro ao buscar ingrediente da receita: " + e.getMessage());
+            e.printStackTrace();
         }
         
         return null;
@@ -92,6 +152,9 @@ public class IngredienteReceitaDAO {
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, codReceita);
+            
+            System.out.println("Executando SQL: " + sql);
+            System.out.println("Parâmetro: CodReceita=" + codReceita);
             
             try (ResultSet rs = stmt.executeQuery()) {
                 // Buscar a receita uma única vez
@@ -116,10 +179,15 @@ public class IngredienteReceitaDAO {
                         
                         ingredientesReceita.add(ingredienteReceita);
                     }
+                    
+                    System.out.println("Encontrados " + ingredientesReceita.size() + " ingredientes para a receita " + codReceita);
+                } else {
+                    System.out.println("Receita " + codReceita + " não encontrada.");
                 }
             }
         } catch (SQLException e) {
             System.out.println("Erro ao listar ingredientes da receita: " + e.getMessage());
+            e.printStackTrace();
         }
         
         return ingredientesReceita;
@@ -131,15 +199,66 @@ public class IngredienteReceitaDAO {
         
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setDouble(1, ingredienteReceita.getQuantidade());
+            
+            // Verificar se as referências não são nulas
+            if (ingredienteReceita.getReceita() == null) {
+                System.out.println("Erro: A receita não pode ser nula!");
+                return false;
+            }
+            
+            if (ingredienteReceita.getIngrediente() == null) {
+                System.out.println("Erro: O ingrediente não pode ser nulo!");
+                return false;
+            }
+            
+            // Validar que a quantidade não seja negativa
+            if (ingredienteReceita.getQuantidade() < 0) {
+                System.out.println("Erro: A quantidade não pode ser negativa!");
+                return false;
+            }
+            
+            // Validar que a quantidade esteja dentro do limite numeric(4,2)
+            if (ingredienteReceita.getQuantidade() >= 100) {
+                System.out.println("Erro: A quantidade deve ser menor que 100!");
+                return false;
+            }
+            
+            try {
+                // Converter para BigDecimal com escala 2 (duas casas decimais)
+                BigDecimal quantidade = BigDecimal.valueOf(ingredienteReceita.getQuantidade())
+                                           .setScale(2, RoundingMode.HALF_UP);
+                stmt.setBigDecimal(1, quantidade);
+            } catch (Exception e) {
+                System.out.println("Erro ao converter quantidade para o formato do banco: " + e.getMessage());
+                return false;
+            }
+            
             stmt.setString(2, ingredienteReceita.getUnidadeMedida());
             stmt.setInt(3, ingredienteReceita.getReceita().getCodReceita());
             stmt.setInt(4, ingredienteReceita.getIngrediente().getCodIngrediente());
             
+            System.out.println("Executando SQL: " + sql);
+            System.out.println("Parâmetros: Quantidade=" + ingredienteReceita.getQuantidade() + 
+                             ", Unidade=" + ingredienteReceita.getUnidadeMedida() +
+                             ", CodReceita=" + ingredienteReceita.getReceita().getCodReceita() + 
+                             ", CodIngrediente=" + ingredienteReceita.getIngrediente().getCodIngrediente());
+            
             int linhasAfetadas = stmt.executeUpdate();
-            return linhasAfetadas > 0;
+            
+            if (linhasAfetadas > 0) {
+                System.out.println("Ingrediente na receita atualizado com sucesso!");
+                return true;
+            } else {
+                System.out.println("Nenhuma linha afetada ao atualizar ingrediente na receita. Verifique se a combinação de Receita e Ingrediente existe.");
+                return false;
+            }
         } catch (SQLException e) {
-            System.out.println("Erro ao atualizar ingrediente da receita: " + e.getMessage());
+            System.out.println("Erro ao atualizar ingrediente na receita: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        } catch (Exception e) {
+            System.out.println("Erro não esperado ao atualizar ingrediente na receita: " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
@@ -152,10 +271,21 @@ public class IngredienteReceitaDAO {
             stmt.setInt(1, codReceita);
             stmt.setInt(2, codIngrediente);
             
+            System.out.println("Executando SQL: " + sql);
+            System.out.println("Parâmetros: CodReceita=" + codReceita + ", CodIngrediente=" + codIngrediente);
+            
             int linhasAfetadas = stmt.executeUpdate();
-            return linhasAfetadas > 0;
+            
+            if (linhasAfetadas > 0) {
+                System.out.println("Ingrediente na receita excluído com sucesso!");
+                return true;
+            } else {
+                System.out.println("Nenhuma linha afetada ao excluir ingrediente na receita.");
+                return false;
+            }
         } catch (SQLException e) {
             System.out.println("Erro ao excluir ingrediente da receita: " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
@@ -167,10 +297,21 @@ public class IngredienteReceitaDAO {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, codReceita);
             
+            System.out.println("Executando SQL: " + sql);
+            System.out.println("Parâmetro: CodReceita=" + codReceita);
+            
             int linhasAfetadas = stmt.executeUpdate();
-            return linhasAfetadas > 0;
+            
+            if (linhasAfetadas > 0) {
+                System.out.println("Excluídos " + linhasAfetadas + " ingredientes da receita " + codReceita);
+                return true;
+            } else {
+                System.out.println("Nenhum ingrediente encontrado para excluir na receita " + codReceita);
+                return false;
+            }
         } catch (SQLException e) {
             System.out.println("Erro ao excluir ingredientes da receita: " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }

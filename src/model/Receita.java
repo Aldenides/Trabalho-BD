@@ -91,6 +91,7 @@ public class Receita {
 
     @Override
     public String toString() {
-        return nome;
+        // Format: "Código: X - Nome da Receita"
+        return String.format("Código: %d - %s", codReceita, nome);
     }
 } 
